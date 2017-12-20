@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/vETTaskName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:hint="Name"
+        android:textSize="22sp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/vRVSubTasks"
+        android:layout_margin="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/vETTaskName"/>
+
+    <RadioGroup
+        android:id="@+id/lRGTaskTypes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/vRVSubTasks">
+        <RadioButton
+            android:id="@+id/vRBtnTypeTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/vRBtnTypeHobby"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <RadioButton
+            android:id="@+id/vRBtnTypeDeadline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/vETTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:inputType="numberDecimal"
+        android:hint="Hours"
+        android:layout_below="@id/lRGTaskTypes"/>
+
+    <EditText
+        android:id="@+id/vETDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="Date"
+        android:layout_below="@id/vETTime"/>
+
+</RelativeLayout>
