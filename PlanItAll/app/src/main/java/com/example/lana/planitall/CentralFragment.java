@@ -10,16 +10,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -36,10 +40,18 @@ public class CentralFragment extends Fragment {
     @Nullable
     private SQLiteDatabase database;
 
+    private RadioGroup typeRG;
+    private RadioButton rBtnTask;
+    private RadioButton rBtnHobby;
+    private RadioButton rBtnDeadline;
+
     private EditText nameET;
     private EditText timeET;
+    private EditText dateET;
+    private EditText periodET;
+    private EditText fromTimeET;
+    private EditText toTimeET;
     private Button addBtn;
-    private Button readBtn;
 
     public CentralFragment() {
     }
@@ -60,40 +72,118 @@ public class CentralFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         dbHelper = new DBHelper(getContext());
-        View rootView = inflater.inflate(R.layout.fragment_central, container, false);
-        nameET = rootView.findViewById(R.id.editTaskName);
-        timeET = rootView.findViewById(R.id.editTaskTime);
-        addBtn = rootView.findViewById(R.id.btnAddNewTask);
-        readBtn = rootView.findViewById(R.id.button3);
+        View rootView = inflater.inflate(R.layout.fragment_central_new, container, false);
+        typeRG = rootView.findViewById(R.id.lRGTaskTypes);
+        rBtnTask = rootView.findViewById(R.id.vRBtnTypeTask);
+        rBtnHobby = rootView.findViewById(R.id.vRBtnTypeHobby);
+        rBtnDeadline = rootView.findViewById(R.id.vRBtnTypeDeadline);
+        nameET = rootView.findViewById(R.id.vETTaskName);
+        timeET = rootView.findViewById(R.id.vETTime);
+        dateET = rootView.findViewById(R.id.vETDateTask);
+        periodET = rootView.findViewById(R.id.vETDateHobby);
+        fromTimeET = rootView.findViewById(R.id.vETDateDeadlineFrom);
+        toTimeET = rootView.findViewById(R.id.vETDateDeadlineTo);
+        addBtn = rootView.findViewById(R.id.vBtnAdd);
         addBtn.setOnClickListener(view -> {
             openWriteDatabase();
-            String name = nameET.getText().toString();
-            String durationString = timeET.getText().toString();
-            int duration = Integer.valueOf(durationString);
-            database.execSQL("insert or replace into task (name, duration, date) values(\"" + name + "\", "
+            try {
+                String name = nameET.getText().toString();
+                String durationString = timeET.getText().toString();
+                float duration = Float.valueOf(durationString);
+                if (rBtnTask.isChecked()) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
+                    Date date = formatter.parse(dateET.getText().toString());
+                    long dateMillis = date.getTime();
+                    database.execSQL("insert or replace into task (name, duration, date) values(\"" + name + "\", "
                     + duration + ", "
-                    + System.currentTimeMillis() + ")");
-            closeDatabase();
-        });
-        readBtn.setOnClickListener(view -> {
-            openReadDatabase();
-            Cursor cursor = database.rawQuery("select name, duration, date from task", null);
-            String text = "";
-            while (cursor.moveToNext()) {
-                text += cursor.getString(0) + ", "
-                        + cursor.getInt(1) + ", "
-                        + cursor.getInt(2) + " \n";
+                    + dateMillis + ")");
+                } else if (rBtnHobby.isChecked()) {
+                    int period = Integer.valueOf(periodET.getText().toString());
+                    database.execSQL("insert or replace into hobby (name, duration, date, period) values(\"" + name + "\", "
+                            + duration + ", "
+                            + System.currentTimeMillis() + ", "
+                            + period + ")");
+                } else if (rBtnDeadline.isChecked()) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
+                    Date fromDate = formatter.parse(fromTimeET.getText().toString());
+                    long fromDateMillis = fromDate.getTime();
+                    Date toDate = formatter.parse(toTimeET.getText().toString());
+                    long toDateMillis = toDate.getTime();
+                    database.execSQL("insert or replace into deadline (name, duration, from_date, to_date) values(\"" + name + "\", "
+                            + duration + ", "
+                            + fromDateMillis + ", "
+                            + toDateMillis + ")");
+                }
+                nameET.setText("");
+                timeET.setText("");
+                dateET.setText("");
+                periodET.setText("");
+                fromTimeET.setText("");
+                toTimeET.setText("");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } finally {
+                closeDatabase();
             }
-            cursor.close();
-            closeDatabase();
-            new AlertDialog.Builder(getContext())
-                    .setMessage(text)
-                    .show();
         });
-
-        // TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+        typeRG.setOnCheckedChangeListener((radioGroup, i) -> {
+            switch (i) {
+                case R.id.vRBtnTypeHobby:
+                    dateET.setVisibility(View.GONE);
+                    periodET.setVisibility(View.VISIBLE);
+                    fromTimeET.setVisibility(View.GONE);
+                    toTimeET.setVisibility(View.GONE);
+                    break;
+                case R.id.vRBtnTypeDeadline:
+                    dateET.setVisibility(View.GONE);
+                    periodET.setVisibility(View.GONE);
+                    fromTimeET.setVisibility(View.VISIBLE);
+                    toTimeET.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    dateET.setVisibility(View.VISIBLE);
+                    periodET.setVisibility(View.GONE);
+                    fromTimeET.setVisibility(View.GONE);
+                    toTimeET.setVisibility(View.GONE);
+                    break;
+            }
+        });
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        openReadDatabase();
+        String text = "Tasks: \n";
+        Cursor cursor = database.rawQuery("select * from task", null);
+        while (cursor.moveToNext()) {
+            text += cursor.getInt(0) + ", "
+                    + cursor.getString(1) + ", "
+                    + cursor.getFloat(2) + ", "
+                    + cursor.getInt(3) + "\n";
+        }
+        cursor.close();
+        text += "Hobby: \n";
+        cursor = database.rawQuery("select * from hobby", null);
+        while (cursor.moveToNext()) {
+            text += cursor.getString(1) + "  "
+                    + "hobby"
+                    + cursor.getFloat(2) + "\n";
+        }
+        cursor.close();
+        text += "Deadline: \n";
+        cursor = database.rawQuery("select * from deadline", null);
+        while (cursor.moveToNext()) {
+            text += cursor.getInt(0) + ", "
+                    + cursor.getString(1) + ", "
+                    + cursor.getFloat(2) + ", "
+                    + cursor.getInt(3) + ", "
+                    + cursor.getInt(4) + "\n";
+        }
+        cursor.close();
+        Log.d("DATABASE", text);
+        closeDatabase();
     }
 
     @Override

@@ -19,23 +19,20 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("create table task ("
                 + "id integer primary key autoincrement,"
                 + "name text not null,"
-                + "duration integer not null,"
+                + "duration real not null,"
                 + "date integer not null);");
         sqLiteDatabase.execSQL("create table hobby ("
                 + "id integer primary key autoincrement,"
                 + "name text not null,"
-                + "duration integer not null,"
+                + "duration real not null,"
+                + "date integer not null,"
                 + "period integer not null);");
         sqLiteDatabase.execSQL("create table deadline ("
                 + "id integer primary key autoincrement,"
                 + "name text not null,"
-                + "duration integer not null,"
+                + "duration real not null,"
                 + "from_date integer not null,"
                 + "to_date integer not null);");
-        sqLiteDatabase.execSQL("create table subtask ("
-                + "id integer primary key autoincrement,"
-                + "message text not null,"
-                + "parent_id integer not null);");
     }
 
     @Override
