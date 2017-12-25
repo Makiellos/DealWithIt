@@ -1,111 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <EditText
-        android:id="@+id/vETTaskName"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:hint="Name"
-        android:textSize="22sp"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/vRVSubTasks"
-        android:layout_margin="4dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/vETTaskName"/>
-
-    <RadioGroup
-        android:id="@+id/lRGTaskTypes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/vRVSubTasks">
-        <RadioButton
-            android:id="@+id/vRBtnTypeTask"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Task"/>
-        <RadioButton
-            android:id="@+id/vRBtnTypeHobby"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hobby"/>
-        <RadioButton
-            android:id="@+id/vRBtnTypeDeadline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Deadline"/>
-    </RadioGroup>
-
-    <EditText
-        android:id="@+id/vETTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:inputType="numberDecimal"
-        android:hint="Hours"
-        android:layout_below="@id/lRGTaskTypes"/>
-
-    <LinearLayout
-        android:id="@+id/lLinVariableTimes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/vETTime"
-        android:orientation="vertical">
+        android:layout_centerInParent="true">
 
         <EditText
-            android:id="@+id/vETDateTask"
-            android:layout_width="match_parent"
+            android:id="@+id/vETTaskName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="date"
-            android:hint="Date"/>
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:hint="Name"
+            android:textSize="22sp" />
+
+        <RadioGroup
+            android:id="@+id/lRGTaskTypes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vETTaskName"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/vRBtnTypeTask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Task" />
+
+            <RadioButton
+                android:id="@+id/vRBtnTypeHobby"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hobby" />
+
+            <RadioButton
+                android:id="@+id/vRBtnTypeDeadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deadline" />
+        </RadioGroup>
+
         <EditText
-            android:id="@+id/vETDateHobby"
+            android:id="@+id/vETTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:visibility="gone"
-            android:hint="Period"/>
+            android:layout_below="@id/lRGTaskTypes"
+            android:layout_centerHorizontal="true"
+            android:hint="Hours"
+            android:inputType="numberDecimal"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"/>
 
         <LinearLayout
+            android:id="@+id/lLinVariableTimes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_below="@id/vETTime"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <EditText
-                android:id="@+id/vETDateDeadlineFrom"
-                android:layout_width="0dp"
+                android:id="@+id/vETDateTask"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Date"
                 android:inputType="date"
-                android:visibility="gone"
-                android:hint="From"
-                android:layout_weight="1"/>
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"/>
+
             <EditText
-                android:id="@+id/vETDateDeadlineTo"
-                android:layout_width="0dp"
+                android:id="@+id/vETDateHobby"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
+                android:hint="Period"
+                android:inputType="number"
                 android:visibility="gone"
-                android:hint="To"
-                android:layout_weight="1"/>
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/vETDateDeadlineFrom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="From"
+                    android:inputType="date"
+                    android:visibility="gone"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"/>
+
+                <EditText
+                    android:id="@+id/vETDateDeadlineTo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="To"
+                    android:inputType="date"
+                    android:visibility="gone"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <Button
-        android:id="@+id/vBtnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/lLinVariableTimes"/>
+        <Button
+            android:id="@+id/vBtnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lLinVariableTimes"
+            android:layout_centerHorizontal="true"
+            android:text="Add" />
+    </RelativeLayout>
 
 </RelativeLayout>

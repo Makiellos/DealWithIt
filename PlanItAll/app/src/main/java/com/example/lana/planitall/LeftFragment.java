@@ -113,7 +113,7 @@ public class LeftFragment extends Fragment {
             }
             cursor.close();
 
-            cursor = database.rawQuery("select * from hobby where (date - " + DateTransform.getCurrentDateMillis() + ") % period = 0", null);
+            cursor = database.rawQuery("select * from hobby where (date - " + DateTransform.getCurrentDateMillis() + ") % (period*1000*60*60*24) = 0", null);
             while (cursor.moveToNext()) {
                 Hobby hobby = new Hobby(cursor.getInt(0), cursor.getString(1),
                         cursor.getFloat(2), cursor.getLong(3), cursor.getInt(4));
@@ -137,6 +137,8 @@ public class LeftFragment extends Fragment {
             adapter.addAll(taskList);
 
             adapter.notifyDataSetChanged();
+
+
 
         }
     }

@@ -1,5 +1,6 @@
 package com.example.lana.planitall.model;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -9,19 +10,25 @@ import java.util.Date;
 public class DateTransform {
 
     public static long getCurrentDateMillis(){
-        final long MILLIS_IN_DAY = 60 * 60 * 24 * 1000;
-        long currentTime = new Date().getTime();
-        long dateOnly = (currentTime / MILLIS_IN_DAY) * MILLIS_IN_DAY;
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 
-        return dateOnly;
+        return cal.getTimeInMillis();
     }
 
     public static long deleteMills(Date date){
-        final long MILLIS_IN_DAY = 60 * 60 * 24 * 1000;
-        long currentTime = date.getTime();
-        long dateOnly = (currentTime / MILLIS_IN_DAY) * MILLIS_IN_DAY;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 
-        return dateOnly;
+        return cal.getTimeInMillis();
 
     }
 
