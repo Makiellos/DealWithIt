@@ -8,10 +8,20 @@ import java.util.Date;
 
 public class Hobby extends BaseTask {
     protected int period;
+    protected int date;
 
-    public Hobby(Integer id, String name, String duration, int period) {
+    public int getDate() {
+        return date;
+    }
+
+    public void setDate(int date) {
+        this.date = date;
+    }
+
+    public Hobby(Integer id, String name, Float duration, int date, int period) {
         super(id, name, duration);
         this.period = period;
+        this.date = date;
     }
 
     public int getPeriod() {

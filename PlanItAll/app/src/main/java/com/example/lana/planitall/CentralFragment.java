@@ -182,14 +182,13 @@ public class CentralFragment extends Fragment {
                     + cursor.getInt(4) + "\n";
         }
         cursor.close();
-        Log.d("DATABASE", text);
         closeDatabase();
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
         closeDatabase();
-        super.onStop();
+        super.onPause();
     }
 
     private void closeDatabase() {

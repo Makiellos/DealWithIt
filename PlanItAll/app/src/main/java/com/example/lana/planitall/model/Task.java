@@ -9,7 +9,7 @@ import java.util.Date;
 public class Task extends BaseTask {
     protected Date date;
 
-    public Task(Integer id, String name, String duration, Date date) {
+    public Task(Integer id, String name, Float duration, Date date) {
         super(id, name, duration);
         this.date = date;
     }

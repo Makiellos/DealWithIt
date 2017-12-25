@@ -11,7 +11,7 @@ public class Deadline extends BaseTask {
     protected Date fromDate;
     protected Date toDate;
 
-    public Deadline(Integer id, String name, String duration, Date fromDate, Date toDate) {
+    public Deadline(Integer id, String name, Float duration, Date fromDate, Date toDate) {
         super(id, name, duration);
         this.fromDate = fromDate;
         this.toDate = toDate;

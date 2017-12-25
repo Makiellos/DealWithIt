@@ -7,9 +7,9 @@ package com.example.lana.planitall.model;
 public abstract class BaseTask {
     protected Integer id;
     protected String name;
-    protected String duration;
+    protected Float duration;
 
-    public BaseTask(Integer id, String name, String duration) {
+    public BaseTask(Integer id, String name, Float duration) {
         this.id = id;
         this.name = name;
         this.duration = duration;
@@ -31,11 +31,11 @@ public abstract class BaseTask {
         this.name = name;
     }
 
-    public String getDuration() {
+    public Float getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(Float duration) {
         this.duration = duration;
     }
 }
