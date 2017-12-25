@@ -4,6 +4,7 @@ package com.example.lana.planitall;
  * Created by lanan on 12/19/2017.
  */
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -13,17 +14,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.lana.planitall.model.BaseTask;
+import com.example.lana.planitall.model.DateTransform;
 import com.example.lana.planitall.model.Deadline;
 import com.example.lana.planitall.model.Hobby;
 import com.example.lana.planitall.model.Task;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +39,9 @@ public class LeftFragment extends Fragment {
     private ListView vListOfTasks;
     private DBHelper dbHelper;
     private SQLiteDatabase database;
+    private List<BaseTask> taskList = new ArrayList<>();
+    ArrayAdapter<BaseTask> adapter;
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -52,57 +60,85 @@ public class LeftFragment extends Fragment {
         return fragment;
     }
 
+    //SimpleAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to)
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_left, container, false);
         dbHelper = new DBHelper(getContext());
         vListOfTasks = rootView.findViewById(R.id.vListOfTasks);
+
+        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, taskList);
+
+        vListOfTasks.setAdapter(adapter);
+
+        vListOfTasks.setOnItemClickListener((adapterView, view, i, l) -> {
+            if ((taskList.size() >= i + 1)) {
+                BaseTask tempTask = taskList.get(i);
+                openWriteDatabase();
+                if (tempTask instanceof Task) {
+                    database.execSQL("delete from task where id=" + tempTask.getId());
+                } else if (tempTask instanceof Hobby) {
+                    database.execSQL("delete from hobby where id=" + tempTask.getId());
+                } else if (tempTask instanceof Deadline) {
+                    database.execSQL("delete from deadline where id=" + tempTask.getId());
+                }
+
+                taskList.remove(i);
+                adapter.clear();
+                adapter.addAll(taskList);
+                adapter.notifyDataSetChanged();
+
+                closeDatabase();
+            }
+        });
+
         return rootView;
     }
 
-
     @Override
-    public void onResume() {
-        super.onResume();
-        Map<Integer, BaseTask> taskMap = new HashMap<>();
-        openReadDatabase();
-        String text = "Tasks: \n";
-        Cursor cursor = database.rawQuery("select * from task", null);
-        while (cursor.moveToNext()) {
-            Task task = new Task(cursor.getInt(0), cursor.getString(1),
-                    cursor.getFloat(2), new Date(cursor.getInt(3)));
-            taskMap.put(cursor.getInt(0), task);
-        }
-        cursor.close();
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            List<BaseTask> taskList = new ArrayList<>();
 
-        Map<Integer, BaseTask> hobbyMap = new HashMap<>();
-        text += "Hobby: \n";
-        cursor = database.rawQuery("select * from hobby", null);
-        while (cursor.moveToNext()) {
-            Hobby hobby = new Hobby(cursor.getInt(0), cursor.getString(1),
-                    cursor.getFloat(2), cursor.getInt(3), cursor.getInt(4));
-            taskMap.put(cursor.getInt(0), hobby);
-        }
-        cursor.close();
-        Map<Integer, BaseTask> deadlineMap = new HashMap<>();
-        text += "Deadline: \n";
-        cursor = database.rawQuery("select * from deadline", null);
-        while (cursor.moveToNext()) {
-            Deadline deadline = new Deadline(cursor.getInt(0), cursor.getString(1),
-                    cursor.getFloat(2), new Date(cursor.getInt(3)), new Date(cursor.getInt(4)));
-            taskMap.put(cursor.getInt(0), deadline);
-        }
-        cursor.close();
-        closeDatabase();
-    }
+            openReadDatabase();
+            Cursor cursor = database.rawQuery("select * from task where date =  " + DateTransform.getCurrentDateMillis(), null);
+            while (cursor.moveToNext()) {
+                Task task = new Task(cursor.getInt(0), cursor.getString(1),
+                        cursor.getFloat(2), new Date(cursor.getLong(3)));
+                taskList.add(task);
+            }
+            cursor.close();
 
-    
+            cursor = database.rawQuery("select * from hobby where (date - " + DateTransform.getCurrentDateMillis() + ") % period = 0", null);
+            while (cursor.moveToNext()) {
+                Hobby hobby = new Hobby(cursor.getInt(0), cursor.getString(1),
+                        cursor.getFloat(2), cursor.getLong(3), cursor.getInt(4));
+                taskList.add(hobby);
+            }
+            cursor.close();
 
-    @Override
-    public void onPause() {
-        closeDatabase();
-        super.onPause();
+            cursor = database.rawQuery("select * from deadline where (from_date <= " + DateTransform.getCurrentDateMillis() + ") " +
+                    "AND (to_date >= " + DateTransform.getCurrentDateMillis() + ")", null);
+            while (cursor.moveToNext()) {
+                Deadline deadline = new Deadline(cursor.getInt(0), cursor.getString(1),
+                        cursor.getFloat(2), new Date(cursor.getLong(3)), new Date(cursor.getLong(4)));
+                taskList.add(deadline);
+            }
+            cursor.close();
+            closeDatabase();
+
+            this.taskList = taskList;
+
+            adapter.clear();
+            adapter.addAll(taskList);
+
+            adapter.notifyDataSetChanged();
+
+        }
     }
 
     private void closeDatabase() {

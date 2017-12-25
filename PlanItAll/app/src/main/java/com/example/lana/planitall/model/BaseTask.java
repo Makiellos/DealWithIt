@@ -38,4 +38,9 @@ public abstract class BaseTask {
     public void setDuration(Float duration) {
         this.duration = duration;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

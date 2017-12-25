@@ -20,6 +20,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.example.lana.planitall.model.DateTransform;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,9 +93,9 @@ public class CentralFragment extends Fragment {
                 String durationString = timeET.getText().toString();
                 float duration = Float.valueOf(durationString);
                 if (rBtnTask.isChecked()) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Date date = formatter.parse(dateET.getText().toString());
-                    long dateMillis = date.getTime();
+                    long dateMillis = DateTransform.deleteMills(date);
                     database.execSQL("insert or replace into task (name, duration, date) values(\"" + name + "\", "
                     + duration + ", "
                     + dateMillis + ")");
@@ -101,14 +103,14 @@ public class CentralFragment extends Fragment {
                     int period = Integer.valueOf(periodET.getText().toString());
                     database.execSQL("insert or replace into hobby (name, duration, date, period) values(\"" + name + "\", "
                             + duration + ", "
-                            + System.currentTimeMillis() + ", "
+                            + DateTransform.getCurrentDateMillis() + ", "
                             + period + ")");
                 } else if (rBtnDeadline.isChecked()) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Date fromDate = formatter.parse(fromTimeET.getText().toString());
-                    long fromDateMillis = fromDate.getTime();
+                    long fromDateMillis = DateTransform.deleteMills(fromDate);
                     Date toDate = formatter.parse(toTimeET.getText().toString());
-                    long toDateMillis = toDate.getTime();
+                    long toDateMillis = DateTransform.deleteMills(toDate);
                     database.execSQL("insert or replace into deadline (name, duration, from_date, to_date) values(\"" + name + "\", "
                             + duration + ", "
                             + fromDateMillis + ", "
@@ -161,14 +163,13 @@ public class CentralFragment extends Fragment {
             text += cursor.getInt(0) + ", "
                     + cursor.getString(1) + ", "
                     + cursor.getFloat(2) + ", "
-                    + cursor.getInt(3) + "\n";
+                    + cursor.getLong(3) + "\n";
         }
         cursor.close();
         text += "Hobby: \n";
         cursor = database.rawQuery("select * from hobby", null);
         while (cursor.moveToNext()) {
             text += cursor.getString(1) + "  "
-                    + "hobby"
                     + cursor.getFloat(2) + "\n";
         }
         cursor.close();
@@ -178,11 +179,13 @@ public class CentralFragment extends Fragment {
             text += cursor.getInt(0) + ", "
                     + cursor.getString(1) + ", "
                     + cursor.getFloat(2) + ", "
-                    + cursor.getInt(3) + ", "
-                    + cursor.getInt(4) + "\n";
+                    + cursor.getLong(3) + ", "
+                    + cursor.getLong(4) + "\n";
         }
         cursor.close();
+        Log.d("lol", "onResume: " + text);
         closeDatabase();
+
     }
 
     @Override
